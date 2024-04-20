@@ -1,0 +1,35 @@
+{
+    "release": {
+        "branches": [
+            "main"
+        ]
+    },
+    "repositoryUrl": "https://github.com/GonzaloHirsch/traffic-visualizer.git",
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        [
+            "@semantic-release/exec",
+            {
+                "verifyReleaseCmd": "echo \"NEXT_RELEASE_VERSION=${nextRelease.version}\" >> $GITHUB_ENV"
+            }
+        ],
+        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "docs/changelog.md"
+            }
+        ],
+        "@semantic-release/npm",
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "docs/changelog.md",
+                    "package.json"
+                ]
+            }
+        ],
+        "@semantic-release/github"
+    ]
+}

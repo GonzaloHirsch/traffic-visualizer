@@ -1,0 +1,84 @@
+{
+  "name": "traffic-visualizer",
+  "version": "1.0.8",
+  "description": "",
+  "private": false,
+  "scripts": {
+    "server": "ts-node backend/index.ts",
+    "server:dev": "nodemon backend/index.ts",
+    "lint": "npx eslint .",
+    "toc": "npx markdown-toc README.md --no-firsth1",
+    "dashboard:dev": "(cd dashboard && vite)",
+    "dashboard:build": "(cd dashboard && vite build)",
+    "dashboard:preview": "(cd dashboard && vite preview)",
+    "visualizer:dev": "concurrently -c \"yellow,green\" \"npm:server:dev\" \"npm:dashboard:dev\"",
+    "visualizer": "concurrently -c \"yellow,green\" \"npm:server\" \"npm:dashboard:dev\""
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "tagFormat": "v${version}",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      [
+        "@semantic-release/exec",
+        {
+          "verifyReleaseCmd": "echo \"NEXT_RELEASE_VERSION=${nextRelease.version}\" >> $GITHUB_ENV"
+        }
+      ],
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ]
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/commit-analyzer": "10.0.1",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/github": "9.0.4",
+    "@semantic-release/npm": "12.0.0",
+    "@semantic-release/release-notes-generator": "11.0.4",
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/node": "20.12.7",
+    "@vitejs/plugin-vue": "5.0.4",
+    "eslint": "8.45.0",
+    "eslint-config-google": "0.14.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-prettier": "5.0.0",
+    "markdown-toc": "1.2.0",
+    "nodemon": "3.1.0",
+    "prettier": "3.0.0",
+    "semantic-release": "23.0.8",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5",
+    "vite": "5.2.10"
+  },
+  "dependencies": {
+    "@google-cloud/logging": "11.0.0",
+    "axios": "1.6.8",
+    "concurrently": "8.2.2",
+    "cors": "2.8.5",
+    "express": "4.19.2",
+    "minimatch": "9.0.4",
+    "vue": "3.4.21",
+    "vue-google-charts": "1.1.0"
+  }
+}
