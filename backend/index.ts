@@ -7,6 +7,9 @@ import {
 import express, { Express, Request, Response, query } from 'express';
 import cors from 'cors';
 import axios from 'axios';
+import countries from './countries';
+
+const targetCache = './.cache/cache.json';
 
 const PROJECT_ID: string = 'ssr-blog-prototype';
 console.log(`Target project is: ${PROJECT_ID}`);
@@ -59,7 +62,7 @@ const getLocationByIP = async (ips: string[]) => {
       ips.map((ip) => {
         return {
           query: ip,
-          fields: 'city,country,query'
+          fields: 'city,country,query,countryCode'
         };
       })
     )
@@ -131,7 +134,8 @@ const fetchLogs = async () => {
   let city, country;
   entryList.forEach((entry) => {
     city = ipLocationsMap[entry.sourceIp!]['city'];
-    country = ipLocationsMap[entry.sourceIp!]['country'];
+    country =
+      countries[ipLocationsMap[entry.sourceIp!]['countryCode'] as string];
     // Add country to set
     flow.countries.add(country);
     // Add country to city

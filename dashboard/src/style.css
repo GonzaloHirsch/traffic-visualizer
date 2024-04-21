@@ -24,7 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -58,11 +57,9 @@ button:focus-visible {
   padding: 2em;
 }
 
-#app {
+main {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
 @media (prefers-color-scheme: light) {
@@ -76,4 +73,48 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.note,
+.error {
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border-radius: 5px;
+  font-style: italic;
+}
+.note {
+  background: #eeeeff;
+}
+.error {
+  background: #ffeeee;
+}
+.note::before,
+.error::before {
+  font-style: normal;
+  font-weight: bold;
+  color: white;
+  width: 1rem;
+  border-radius: 50%;
+  font-size: large;
+  margin-right: 0.5rem;
+}
+.note::before {
+  content: 'i';
+  background: #3a3ad4;
+  padding: 0.2rem 0.725rem;
+}
+.error::before {
+  content: 'x';
+  background: #d43a3a;
+  padding: 0.2rem 0.6rem;
+}
+
+/* Main */
+h1 {
+  margin: 2rem 0 1rem 0;
+  font-size: x-large;
+}
+h2 {
+  margin: 1rem 0 0.5rem 0;
+  font-size: large;
 }
