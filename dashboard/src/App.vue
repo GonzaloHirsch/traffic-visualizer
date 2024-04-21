@@ -1,22 +1,75 @@
 <script setup>
-import { provide, ref } from 'vue';
-const secondsToUpdate = ref(60);
+import { provide, ref, onMounted, onUnmounted, onUpdated, nextTick } from 'vue';
+const updateFrequency = 60;
+const secondsToUpdate = ref(updateFrequency);
 provide('secondsToUpdate', secondsToUpdate);
+
+const childComponent = ref(null);
+
+// Times
+const showTimer = () => {
+  secondsToUpdate.value = Math.max(0, secondsToUpdate.value - 1);
+  if (secondsToUpdate.value === 0) {
+    reloadData(childComponent.value, false);
+  }
+};
+
+// Function to reload the data from the child.
+const reloadData = (child, forced) => {
+  // Clear the countdown interval and create another one.
+  secondsToUpdate.value = updateFrequency;
+  // Ensure the child is the correct one.
+  if (child && child.fetchData) {
+    child.fetchData(forced);
+  }
+};
+let countdownInterval = setInterval(showTimer, 1000);
+
+// The initial load might need to wait for a bit.
+const tries = ref(5);
+const initialLoad = () => {
+  if (childComponent.value && childComponent.value.fetchData) {
+    reloadData(childComponent.value, true);
+  } else if (tries.value > 0) {
+    tries.value -= 1;
+    setTimeout(initialLoad, 500);
+  }
+};
+
+// Need to wait a few seconds
+onMounted(() => {
+  initialLoad();
+});
+
+// Make sure to clear the interval.
+onUnmounted(() => {
+  if (countdownInterval) clearInterval(countdownInterval);
+});
 </script>
 
 <template>
   <nav>
     <div>
       <ul>
-        <li class="title"><a href="#">Traffic Visualizer</a></li>
-        <li class="option">How does it work?</li>
-        <li class="option">About</li>
+        <li class="title">
+          <router-link :to="{ name: 'Home' }">Traffic Visualizer</router-link>
+        </li>
+        <li class="option">
+          <router-link :to="{ name: 'HowItWorks' }"
+            >How does it work?</router-link
+          >
+        </li>
+        <li class="option">
+          <router-link :to="{ name: 'About' }">About</router-link>
+        </li>
       </ul>
       <p class="update">Next update in: {{ secondsToUpdate }}s</p>
     </div>
   </nav>
   <main>
-    <router-view class="router"></router-view>
+    <router-view v-slot="{ Component }">
+      <component ref="childComponent" :is="Component" />
+    </router-view>
   </main>
   <footer>
     <ul>

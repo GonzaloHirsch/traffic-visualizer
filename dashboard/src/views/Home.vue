@@ -1,5 +1,5 @@
 <script setup>
-import { onUnmounted, ref, computed, inject } from 'vue';
+import { ref, computed } from 'vue';
 import { GChart } from 'vue-google-charts';
 import slider from 'vue3-slider';
 import axios from 'axios';
@@ -9,13 +9,6 @@ const nodeLimit = ref(10);
 const minNodes = ref(1);
 const maxNodes = ref(nodeLimit.value);
 const pattern = ref('');
-const secondsToUpdate = inject('secondsToUpdate');
-
-// Times
-let countdownInterval;
-const showTimer = () => {
-  secondsToUpdate.value = Math.max(0, secondsToUpdate.value - 1);
-};
 
 // Charts
 const baseSankeyKeys = ['From', 'To', 'Requests'];
@@ -36,13 +29,8 @@ const visibleGeoData = computed(() => {
   return geoData.value;
 });
 const fetchData = async (forceControl = false) => {
-  // Clear the countdown interval and create another one.
-  if (countdownInterval) clearInterval(countdownInterval);
-  secondsToUpdate.value = 60;
-  countdownInterval = setInterval(showTimer, 1000);
-
+  console.log('Getting data');
   axios.get('http://localhost:3000/traffic').then((response) => {
-    console.log(response.data);
     const newSankeyData = [baseSankeyKeys];
     const newGeoData = [baseGeoKeys];
     // Iterate the response to build the flow.
@@ -72,16 +60,11 @@ const fetchData = async (forceControl = false) => {
     // Map the response to the format.
     sankeyData.value = newSankeyData;
     geoData.value = newGeoData;
-    console.log(newGeoData);
   });
 };
-fetchData(true);
-const interval = setInterval(() => fetchData(false), 1000 * 60 * 1);
 
-// Make sure to clear the interval.
-onUnmounted(() => {
-  if (interval) clearInterval(interval);
-  if (countdownInterval) clearInterval(countdownInterval);
+defineExpose({
+  fetchData
 });
 </script>
 
@@ -167,7 +150,7 @@ onUnmounted(() => {
     Nuxt.
   </p>
   <h1>Traffic Breakdown per Country</h1>
-  <p>
+  <p style="margin-bottom: 1rem">
     This view allows you to identify countries more easily to understand greater
     regions where traffic is coming from.
   </p>
