@@ -1,57 +1,29 @@
 import { Logging } from '@google-cloud/logging';
-import {
-  Entry,
-  StructuredJson,
-  Timestamp
-} from '@google-cloud/logging/build/src/entry';
-import express, { Express, Request, Response, query } from 'express';
+import { Entry, StructuredJson } from '@google-cloud/logging/build/src/entry';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import axios from 'axios';
+
+// Local imports.
 import countries from './countries';
+import { Flow, Event } from './interfaces';
+import { chunkify } from './utils';
+import { loadConfig } from './config';
+import { initCache } from './cache';
 
-const targetCache = './.cache/cache.json';
+// Load the configuration.
+const config = loadConfig();
 
-const PROJECT_ID: string = 'ssr-blog-prototype';
-console.log(`Target project is: ${PROJECT_ID}`);
-const logging = new Logging({ projectId: PROJECT_ID });
+// Attempt to init based on the mode.
+const flow: Flow = initCache(config?.mode);
 
-interface Flow {
-  flow: { [key: string]: { [key: string]: number } };
-  countries: Set<string>;
-}
-const flow: Flow = {
-  flow: {},
-  countries: new Set()
-};
-
-interface Event {
-  serviceName?: string;
-  sourceIp?: string;
-  sourceCity?: string;
-  sourceCountry?: string;
-  requestMethod?: string;
-  targetUrl?: string;
-  targetUrlPath?: string;
-  timestamp?: Timestamp;
-}
+// Initialise the logging client.
+console.log(`Target project is: ${config?.gcp?.project_id}`);
+const logging = new Logging({ projectId: config?.gcp?.project_id });
 
 // Dates to use as references.
 let newDate = new Date();
-let lastDate = new Date(newDate.getTime() - 6 * 60 * 60 * 1000); // Start with the last day of data.
-
-/**
- * Splits a list into multiple chunks based on the chunk size.
- * @param data to split into chunks.
- * @param size of each chunk.
- * @returns a list full of chunks from the original data.
- */
-const chunkify = (data: any[], size: number): any[][] => {
-  const result: any[][] = [];
-  for (let i = 0; i < data.length; i += size) {
-    result.push(data.slice(i, i + size));
-  }
-  return result;
-};
+let lastDate = new Date(newDate.getTime() - config.initialOffset); // Start with the last day of data.
 
 const getLocationByIP = async (ips: string[]) => {
   return (
@@ -163,24 +135,23 @@ const fetchLogs = async () => {
 // Interval runs in the background.
 console.log('Fetching initial batch of logs...');
 fetchLogs();
-let interval = setInterval(fetchLogs, 1000 * 60 * 1);
+let interval = setInterval(fetchLogs, config.frequency);
 
 // Initialize the express server.
 console.log('Starting server...');
 const app = express();
 app.use(
   cors({
-    origin: ['http://localhost:5173']
+    origin: ['*'] // Allow all origins since this is local.
   })
 );
 
 // Configure app start.
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(config?.http?.port, () => {
+  console.log(`Server is running on port ${config?.http?.port}`);
 });
 
 // Handler for the traffic
-app.get('/traffic', (req: Request, res: Response) => {
+app.get('/traffic', (_req: Request, res: Response) => {
   res.json({ ...flow, countries: Array.from(flow.countries) });
 });

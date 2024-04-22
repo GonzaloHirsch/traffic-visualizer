@@ -129,4 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Start MAC Specific
 .DS_Store
+# End MAC Specific
+
+# Start this specific
+viz.config.json
+# End this specific

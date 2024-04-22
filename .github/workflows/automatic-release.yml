@@ -34,11 +34,11 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate_token.outputs.token }}
-      # Setting up Node, 18 is LTS
+      # Setting up Node, 20 is LTS
       - name: 'Setting up Node'
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
       # Make sure all the dependencies are ok and installed
       - name: 'Installing dependencies'
         run: npm ci
