@@ -2,6 +2,25 @@ import * as fs from 'fs';
 import { ExtendedFlow } from './interfaces';
 
 const CACHE_PATH = '.cache/cache.json';
+let cacheExists = false;
+
+export const createCache = (mode: string, flow: ExtendedFlow) => {
+  if (mode !== 'CACHE') return;
+  // Create cache structure if it doesn't exist.
+  if (!cacheExists) {
+    let parts = CACHE_PATH.split('/');
+    for (let i = 0, target = './'; i < parts.length - 1; i++) {
+      target += `${parts[i]}/`;
+      if (!fs.existsSync(target)) fs.mkdirSync(target);
+    }
+  }
+  // Prepare the cache.
+  const preppedFlow: any = { ...flow };
+  preppedFlow.countries = Array.from(preppedFlow.countries);
+  // Create the cache file if it doesn't exist.
+  fs.writeFileSync(CACHE_PATH, JSON.stringify(preppedFlow));
+  cacheExists = true;
+};
 
 export const getBaseFlow = (): ExtendedFlow => {
   return {
@@ -31,14 +50,7 @@ export const loadCache = (): ExtendedFlow | undefined => {
     console.warn(
       `Cache doesn't exist in directory ${CACHE_PATH}. Creating it...`
     );
-    // Create cache structure if it doesn't exist.
-    let parts = CACHE_PATH.split('/');
-    for (let i = 0, target = './'; i < parts.length - 1; i++) {
-      target += `${parts[i]}/`;
-      if (!fs.existsSync(target)) fs.mkdirSync(target);
-    }
-    // Create the cache file if it doesn't exist.
-    fs.writeFileSync(CACHE_PATH, JSON.stringify({} as ExtendedFlow));
+    createCache('CACHE', getBaseFlow());
     return undefined;
   }
 };
@@ -51,6 +63,7 @@ export const initCache = (mode: string): ExtendedFlow => {
   let potentialLoad = loadCache();
   if (potentialLoad !== undefined) {
     potentialLoad.countries = new Set(potentialLoad.countries);
+    potentialLoad.timestamp = new Date(potentialLoad.timestamp);
   } else {
     potentialLoad = getBaseFlow();
   }

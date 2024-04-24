@@ -7,7 +7,7 @@ import countries from './countries';
 import { ExtendedFlow } from './interfaces';
 import { chunkify } from './utils';
 import { loadConfig } from './config';
-import { initCache } from './cache';
+import { initCache, createCache } from './cache';
 import { getLocationByIP } from './location';
 import { mapLogsToEvents, getLogsForInterval } from './logs';
 import { buildFlow } from './flow';
@@ -78,7 +78,12 @@ const fetchLogs = async () => {
     );
   });
 
+  // Update the date for the flow.
+  flow.timestamp = newDate;
+
   console.log(flow);
+
+  createCache(config?.mode, flow);
 
   // Update the dates with the old one.
   lastDate = newDate;

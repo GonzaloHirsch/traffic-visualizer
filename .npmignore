@@ -3,6 +3,7 @@
 .prettierrc
 .releaserc.json
 .eslintrc.json
+.cache/
 LICENSE
 **/README.md
 nodemon.json
