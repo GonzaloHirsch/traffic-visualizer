@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+
+const props = defineProps(['port']);
+
 const updateFrequency = 60;
 const secondsToUpdate = ref(updateFrequency);
 const flow = ref({});
@@ -9,7 +12,7 @@ const forceControl = ref(true);
 
 const fetchData = async (_forceControl = false) => {
   console.log('Getting data');
-  axios.get('http://localhost:5678/traffic').then((response) => {
+  axios.get(`http://localhost:${props.port}/traffic`).then((response) => {
     flow.value = response.data.flows.normal;
     countries.value = response.data.countries;
     forceControl.value = _forceControl;
