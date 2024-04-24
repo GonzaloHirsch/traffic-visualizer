@@ -1,22 +1,28 @@
 import * as fs from 'fs';
-import { Flow } from './interfaces';
+import { ExtendedFlow } from './interfaces';
 
 const CACHE_PATH = '.cache/cache.json';
 
-export const getBaseFlow = (): Flow => {
+export const getBaseFlow = (): ExtendedFlow => {
   return {
-    flow: {},
+    flows: {
+      city_path: {},
+      city_service: {},
+      country_path: {},
+      country_service: {},
+      normal: {}
+    },
     countries: new Set(),
     timestamp: new Date()
   };
 };
 
-export const loadCache = (): Flow | undefined => {
+export const loadCache = (): ExtendedFlow | undefined => {
   // Verify if it exists or not.
   if (fs.existsSync(CACHE_PATH)) {
     try {
       // Load it.
-      return JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8')) as Flow;
+      return JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8')) as ExtendedFlow;
     } catch (err) {
       console.error('Error reading file:', err);
       return undefined;
@@ -32,12 +38,12 @@ export const loadCache = (): Flow | undefined => {
       if (!fs.existsSync(target)) fs.mkdirSync(target);
     }
     // Create the cache file if it doesn't exist.
-    fs.writeFileSync(CACHE_PATH, JSON.stringify({} as Flow));
+    fs.writeFileSync(CACHE_PATH, JSON.stringify({} as ExtendedFlow));
     return undefined;
   }
 };
 
-export const initCache = (mode: string): Flow => {
+export const initCache = (mode: string): ExtendedFlow => {
   // If no cache, just return an empty Flow.
   if (mode !== 'CACHE') return getBaseFlow();
 

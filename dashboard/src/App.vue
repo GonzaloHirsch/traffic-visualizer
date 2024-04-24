@@ -1,50 +1,48 @@
 <script setup>
-import { provide, ref, onMounted, onUnmounted, onUpdated, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import axios from 'axios';
 const updateFrequency = 60;
 const secondsToUpdate = ref(updateFrequency);
-provide('secondsToUpdate', secondsToUpdate);
+const flow = ref({});
+const countries = ref([]);
+const forceControl = ref(true);
 
-const childComponent = ref(null);
+const fetchData = async (_forceControl = false) => {
+  console.log('Getting data');
+  axios.get('http://localhost:5678/traffic').then((response) => {
+    flow.value = response.data.flows.normal;
+    countries.value = response.data.countries;
+    forceControl.value = _forceControl;
+  });
+};
 
 // Times
 const showTimer = () => {
   secondsToUpdate.value = Math.max(0, secondsToUpdate.value - 1);
   if (secondsToUpdate.value === 0) {
-    reloadData(childComponent.value, false);
+    reloadData(false);
   }
 };
 
 // Function to reload the data from the child.
-const reloadData = (child, forced) => {
+const reloadData = (forced) => {
   // Clear the countdown interval and create another one.
   secondsToUpdate.value = updateFrequency;
-  // Ensure the child is the correct one.
-  if (child && child.fetchData) {
-    child.fetchData(forced);
-  }
+  fetchData(forced);
 };
 let countdownInterval = setInterval(showTimer, 1000);
 
-// The initial load might need to wait for a bit.
-const tries = ref(5);
-const initialLoad = () => {
-  if (childComponent.value && childComponent.value.fetchData) {
-    reloadData(childComponent.value, true);
-  } else if (tries.value > 0) {
-    tries.value -= 1;
-    setTimeout(initialLoad, 500);
-  }
-};
-
 // Need to wait a few seconds
 onMounted(() => {
-  initialLoad();
+  reloadData(true);
 });
 
 // Make sure to clear the interval.
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval);
 });
+
+// Load data here to prevent losing it.
 </script>
 
 <template>
@@ -68,7 +66,12 @@ onUnmounted(() => {
   </nav>
   <main>
     <router-view v-slot="{ Component }">
-      <component ref="childComponent" :is="Component" />
+      <component
+        :is="Component"
+        :flow="flow"
+        :countries="countries"
+        :forceControl="forceControl"
+      />
     </router-view>
   </main>
   <footer>

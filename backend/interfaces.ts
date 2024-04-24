@@ -1,5 +1,13 @@
 import { Timestamp } from '@google-cloud/logging/build/src/entry';
 
+enum FlowTypes {
+  Normal = 'normal',
+  CountryToPath = 'country_path',
+  CountryToService = 'country_service',
+  CityToPath = 'city_path',
+  CityToService = 'city_service'
+}
+
 export interface Configuration {
   mode: string;
   frequency: number;
@@ -18,6 +26,16 @@ export interface Flow {
   timestamp: Date;
 }
 
+export interface ExtendedFlow {
+  flows: {
+    [key in FlowTypes]: {
+      [key: string]: { [key: string]: number };
+    };
+  };
+  countries: Set<string>;
+  timestamp: Date;
+}
+
 export interface Event {
   serviceName?: string;
   sourceIp?: string;
@@ -27,4 +45,11 @@ export interface Event {
   targetUrl?: string;
   targetUrlPath?: string;
   timestamp?: Timestamp;
+}
+
+export interface IPInformation {
+  city: string;
+  country: string;
+  query: string;
+  countryCode: string;
 }

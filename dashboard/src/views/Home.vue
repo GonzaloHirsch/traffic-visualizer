@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, defineProps } from 'vue';
 import { GChart } from 'vue-google-charts';
 import slider from 'vue3-slider';
-import axios from 'axios';
+
+const props = defineProps(['flow', 'countries', 'forceControl']);
 
 // Controls
 const nodeLimit = ref(10);
@@ -13,8 +14,31 @@ const pattern = ref('');
 // Charts
 const baseSankeyKeys = ['From', 'To', 'Requests'];
 const baseGeoKeys = ['Country', 'Requests'];
-const sankeyData = ref([baseSankeyKeys]);
-const geoData = ref([baseGeoKeys]);
+const sankeyData = computed(() => {
+  const newSankeyData = [baseSankeyKeys];
+  Object.keys(props.flow).forEach((key) => {
+    Object.keys(props.flow[key]).forEach((subkey) => {
+      // This is the data for sankey, which is FROM, TO, NUMBER
+      newSankeyData.push([key, subkey, props.flow[key][subkey]]);
+      nodeLimit.value = Math.max(nodeLimit.value, props.flow[key][subkey]);
+      // Only update the max nodes if marked as force.
+      if (props.forceControl) maxNodes.value = nodeLimit.value;
+    });
+  });
+  return newSankeyData;
+});
+const geoData = computed(() => {
+  const newGeoData = [baseGeoKeys];
+  // Iterate the list of countries to compute it
+  props.countries.forEach((country) => {
+    // Iterate the keys for a country and sum them all.
+    let countryTotal = Object.keys(props.flow[country]).reduce((total, key) => {
+      return total + props.flow[country][key];
+    }, 0);
+    newGeoData.push([country, countryTotal]);
+  });
+  return newGeoData;
+});
 const visibleSankeyData = computed(() => {
   return sankeyData.value.filter(
     (data) =>
@@ -27,44 +51,6 @@ const visibleSankeyData = computed(() => {
 });
 const visibleGeoData = computed(() => {
   return geoData.value;
-});
-const fetchData = async (forceControl = false) => {
-  console.log('Getting data');
-  axios.get('http://localhost:3000/traffic').then((response) => {
-    const newSankeyData = [baseSankeyKeys];
-    const newGeoData = [baseGeoKeys];
-    // Iterate the response to build the flow.
-    Object.keys(response.data.flow).forEach((key) => {
-      Object.keys(response.data.flow[key]).forEach((subkey) => {
-        // This is the data for sankey, which is FROM, TO, NUMBER
-        newSankeyData.push([key, subkey, response.data.flow[key][subkey]]);
-        nodeLimit.value = Math.max(
-          nodeLimit.value,
-          response.data.flow[key][subkey]
-        );
-        // Only update the max nodes if marked as force.
-        if (forceControl) maxNodes.value = nodeLimit.value;
-      });
-    });
-    // Iterate the list of countries to compute it
-    response.data.countries.forEach((country) => {
-      // Iterate the keys for a country and sum them all.
-      let countryTotal = Object.keys(response.data.flow[country]).reduce(
-        (total, key) => {
-          return total + response.data.flow[country][key];
-        },
-        0
-      );
-      newGeoData.push([country, countryTotal]);
-    });
-    // Map the response to the format.
-    sankeyData.value = newSankeyData;
-    geoData.value = newGeoData;
-  });
-};
-
-defineExpose({
-  fetchData
 });
 </script>
 
