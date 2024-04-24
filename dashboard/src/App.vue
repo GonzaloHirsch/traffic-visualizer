@@ -19,9 +19,7 @@ const fetchData = async (_forceControl = false) => {
 // Times
 const showTimer = () => {
   secondsToUpdate.value = Math.max(0, secondsToUpdate.value - 1);
-  if (secondsToUpdate.value === 0) {
-    reloadData(false);
-  }
+  if (secondsToUpdate.value === 0) reloadData(false);
 };
 
 // Function to reload the data from the child.
@@ -41,8 +39,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (countdownInterval) clearInterval(countdownInterval);
 });
-
-// Load data here to prevent losing it.
 </script>
 
 <template>

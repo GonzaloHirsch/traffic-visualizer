@@ -49,9 +49,6 @@ const visibleSankeyData = computed(() => {
           new RegExp(pattern.value, 'i').test(data[0] + data[1])))
   );
 });
-const visibleGeoData = computed(() => {
-  return geoData.value;
-});
 </script>
 
 <template>
@@ -144,7 +141,7 @@ const visibleGeoData = computed(() => {
     id="geochart"
     :settings="{ packages: ['geochart'] }"
     type="GeoChart"
-    :data="visibleGeoData"
+    :data="geoData"
     :options="{
       geochart: {
         width: 800,

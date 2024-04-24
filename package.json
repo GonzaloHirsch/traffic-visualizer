@@ -25,12 +25,14 @@
     "toc": "npx markdown-toc README.md --no-firsth1",
     "build:prod": "npm run dashboard:build",
     "dashboard:dev": "(cd dashboard && vite)",
-    "dashboard:build": "(cd dashboard && vite build --outDir ../dist)",
+    "dashboard:build": "(cd dashboard && rm -rf ../dist && vite build --outDir ../dist)",
     "dashboard:preview": "vite preview",
     "visualizer:dev": "concurrently -c \"yellow,green\" \"npm:server:dev\" \"npm:dashboard:dev\"",
     "visualizer": "concurrently -c \"yellow,green\" \"npm:server\" \"npm:dashboard:preview\"",
     "headless": "npm run server",
-    "npx-start": "npm run visualizer"
+    "npx-start": "npm run visualizer",
+    "release": "npm publish",
+    "release:dry": "npm publish --dry-run"
   },
   "release": {
     "branches": [
