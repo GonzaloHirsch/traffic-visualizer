@@ -99,7 +99,7 @@ console.log('Starting server...');
 const app = express();
 app.use(
   cors({
-    origin: ['http://localhost:5173'] // Allow all origins since this is local.
+    origin: '*' // Allow all origins since this is local.
   })
 );
 
