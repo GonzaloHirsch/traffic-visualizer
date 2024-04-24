@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineProps } from 'vue';
+import { ref, computed } from 'vue';
 import { GChart } from 'vue-google-charts';
 import slider from 'vue3-slider';
 
