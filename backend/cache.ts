@@ -8,14 +8,14 @@ export const createCache = (mode: string, flow: ExtendedFlow) => {
   if (mode !== 'CACHE') return;
   // Create cache structure if it doesn't exist.
   if (!cacheExists) {
-    let parts = CACHE_PATH.split('/');
+    const parts = CACHE_PATH.split('/');
     for (let i = 0, target = './'; i < parts.length - 1; i++) {
       target += `${parts[i]}/`;
       if (!fs.existsSync(target)) fs.mkdirSync(target);
     }
   }
   // Prepare the cache.
-  const preppedFlow: any = { ...flow };
+  const preppedFlow: ExtendedFlow = { ...flow };
   preppedFlow.countries = Array.from(preppedFlow.countries);
   // Create the cache file if it doesn't exist.
   fs.writeFileSync(CACHE_PATH, JSON.stringify(preppedFlow));

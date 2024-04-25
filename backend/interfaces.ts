@@ -32,7 +32,7 @@ export interface ExtendedFlow {
       [key: string]: { [key: string]: number };
     };
   };
-  countries: Set<string>;
+  countries: Set<string> | Array<string>;
   timestamp: Date;
 }
 
@@ -52,4 +52,16 @@ export interface IPInformation {
   country: string;
   query: string;
   countryCode: string;
+}
+
+export interface LogHttpRequest {
+  requestUrl: string;
+  remoteIp: string;
+  requestMethod: string;
+}
+
+export interface LogResource {
+  labels: {
+    service_name: string;
+  };
 }

@@ -1,6 +1,6 @@
 import { Logging, GetEntriesResponse } from '@google-cloud/logging';
 import { Entry, StructuredJson } from '@google-cloud/logging/build/src/entry';
-import { Event } from './interfaces';
+import { Event, LogHttpRequest, LogResource } from './interfaces';
 
 export const getLogsForInterval = async (
   loggingClient: Logging,
@@ -29,13 +29,13 @@ export const mapLogsToEvents = (logs: GetEntriesResponse): Event[] => {
   // Map some of the values.
   const entryList: Event[] = logs[0].map((entryElem: Entry) => {
     const elem: StructuredJson = entryElem.toStructuredJSON();
-    let targetUrl: string | undefined = (elem['httpRequest']! as any)[
-      'requestUrl'
-    ];
+    const targetUrl: string | undefined = (
+      elem['httpRequest']! as LogHttpRequest
+    )['requestUrl'];
     return {
-      serviceName: (elem['resource']! as any)['labels']['service_name'],
-      sourceIp: (elem['httpRequest']! as any)['remoteIp'],
-      requestMethod: (elem['httpRequest']! as any)['requestMethod'],
+      serviceName: (elem['resource']! as LogResource)['labels']['service_name'],
+      sourceIp: (elem['httpRequest']! as LogHttpRequest)['remoteIp'],
+      requestMethod: (elem['httpRequest']! as LogHttpRequest)['requestMethod'],
       targetUrl: targetUrl,
       targetUrlPath:
         targetUrl !== undefined ? new URL(targetUrl).pathname : undefined,

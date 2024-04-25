@@ -4,7 +4,7 @@ import cors from 'cors';
 
 // Local imports.
 import countries from './countries';
-import { ExtendedFlow } from './interfaces';
+import { ExtendedFlow, IPInformation } from './interfaces';
 import { chunkify } from './utils';
 import { loadConfig } from './config';
 import { initCache, createCache } from './cache';
@@ -44,10 +44,13 @@ const fetchLogs = async () => {
   // Reduce to get a list of unique IPs.
   const ipChunks = chunkify(
     Object.keys(
-      entryList.reduce((accum, curr) => {
-        accum[curr.sourceIp!] = true;
-        return accum;
-      }, {} as any)
+      entryList.reduce(
+        (accum, curr) => {
+          accum[curr.sourceIp!] = true;
+          return accum;
+        },
+        {} as { [key: string]: boolean }
+      )
     ),
     100
   );
@@ -60,13 +63,16 @@ const fetchLogs = async () => {
     await Promise.all(ipChunks.map((ips) => getLocationByIP(ips)))
   )
     // Reduce the results to get them all into a map for easy access.
-    .reduce((accum: any, curr: any[]) => {
-      // Each item from the list is a list with the results.
-      curr.forEach((ipLocation) => {
-        accum[ipLocation.query] = ipLocation;
-      });
-      return accum;
-    }, {} as any);
+    .reduce(
+      (accum, curr: IPInformation[]) => {
+        // Each item from the list is a list with the results.
+        curr.forEach((ipLocation) => {
+          accum[ipLocation.query] = ipLocation;
+        });
+        return accum;
+      },
+      {} as { [key: string]: IPInformation }
+    );
 
   // Update our counts for visualisation
   entryList.forEach((entry) => {
@@ -92,7 +98,7 @@ const fetchLogs = async () => {
 // Interval runs in the background.
 console.log('Fetching initial batch of logs...');
 fetchLogs();
-let interval = setInterval(fetchLogs, config.frequency);
+setInterval(fetchLogs, config.frequency);
 
 // Initialize the express server.
 console.log('Starting server...');

@@ -7,7 +7,7 @@ export const buildFlow = (
   entry: Event
 ) => {
   // Add country to set
-  flow.countries.add(country);
+  (flow.countries as Set<string>).add(country);
   // Builds the country to path flows
   if (!flow.flows.country_path[country]) {
     flow.flows.country_path[country] = {};
