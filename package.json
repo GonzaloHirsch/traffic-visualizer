@@ -34,7 +34,7 @@
     "toc": "npx markdown-toc README.md --no-firsth1",
     "build:prod": "npm run dashboard:build",
     "dashboard:dev": "(cd dashboard && vite)",
-    "dashboard:build": "(cd dashboard && rm -rf ../dist && vite build --outDir ../dist)",
+    "dashboard:build": "(cd dashboard && rm -rf ../dist && vite build --outDir ../dist --emptyOutDir)",
     "dashboard:preview": "vite preview",
     "visualizer:dev": "concurrently -c \"yellow,green\" \"npm:server:dev\" \"npm:dashboard:dev\"",
     "visualizer": "concurrently -c \"yellow,green\" \"npm:server\" \"npm:dashboard:preview\"",
