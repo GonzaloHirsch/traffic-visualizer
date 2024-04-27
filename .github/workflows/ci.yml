@@ -39,7 +39,7 @@ jobs:
 
   build_and_publish:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.ref_name == 'main'
+    if: (github.event_name == 'workflow_dispatch' && github.ref_name == 'main') || github.ref_name == 'main'
     # As per: https://www.npmjs.com/package/@semantic-release/npm
     permissions:
       contents: write # to be able to publish a GitHub release
