@@ -1,0 +1,104 @@
+name: CI
+run-name: ${{github.actor}} for ${{github.ref_name}} 🚀
+
+on:
+  push:
+    branches:
+      - main
+      - integration
+    paths-ignore:
+      - '*.md'
+  pull_request:
+    branches: [main, integration]
+    paths-ignore:
+      - '*.md'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [12.x, 14.x, 16.x, 18.x, 20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Lint code
+        run: npm run lint
+
+  build_and_publish:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.ref_name == 'main'
+    # As per: https://www.npmjs.com/package/@semantic-release/npm
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+
+    steps:
+      - name: 'Generate token'
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.BOT_APP_ID }}
+          private_key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install Node.js dependencies (CI)
+        run: npm ci
+
+      - name: Build frontend
+        run: npm run build:prod
+
+      - name: Debugging release package for NPM
+        run: npm run release:dry
+
+      - name: 'Getting the next version via Semantic Release'
+        run: npx semantic-release@21 --dry-run
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+
+      - name: Nothing to release
+        if: ${{ env.NEXT_RELEASE_VERSION == '' }}
+        uses: actions/github-script@v6
+        with:
+          script: core.setFailed('Nothing to release')
+
+      - name: 'Releasing via Semantic Release'
+        if: ${{ env.NEXT_RELEASE_VERSION != '' }}
+        run: npx semantic-release@21
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 'Add to output'
+        id: 'prep_output'
+        if: ${{ env.NEXT_RELEASE_VERSION != '' }}
+        run: echo "NEXT_RELEASE_VERSION=${{ env.NEXT_RELEASE_VERSION }}" >> "$GITHUB_OUTPUT"
