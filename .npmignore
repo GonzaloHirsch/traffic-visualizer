@@ -1,0 +1,15 @@
+.github
+**/.gitignore
+.prettierrc
+.releaserc.json
+.eslintrc.json
+.cache/
+LICENSE
+**/README.md
+nodemon.json
+tasks
+**/node_modules
+test
+test-integration
+**/.vscode
+dashboard/
