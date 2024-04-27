@@ -2,10 +2,14 @@ import { createApp } from 'vue';
 import router from './router';
 import './style.css';
 import App from './App.vue';
-import config from '../../viz.config.json';
+
+let config = undefined;
 
 createApp(App, {
-  port: config.http.port
+  port: async () => {
+    if (!config) config = await import('../viz.config.json')
+    return config.http.port
+  }
 })
   .use(router)
   .mount('#app');
