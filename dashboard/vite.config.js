@@ -8,5 +8,5 @@ export default defineConfig({
     minify: true,
     cssMinify: true,
     sourcemap: false
-  }
+  },
 });
