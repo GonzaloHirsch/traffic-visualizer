@@ -1,15 +1,17 @@
-import { createApp } from 'vue';
+import { createApp, provide, h } from 'vue';
 import router from './router';
 import './style.css';
 import App from './App.vue';
 
-let config = undefined;
+let configPromise = undefined;
 
-createApp(App, {
-  port: async () => {
-    if (!config) config = await import('../viz.config.json')
-    return config.http.port
-  }
-})
+createApp({
+  created() {
+    if (!configPromise) configPromise = require(`../${process.env.NODE_ENV === "production" ? '' : '../'}viz.config.json`).default
+    provide("viz", configPromise)
+  },
+  render: () => h(App)
+}
+)
   .use(router)
   .mount('#app');

@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, inject } from 'vue';
 import axios from 'axios';
 
-const props = defineProps(['port']);
+const configPromise = inject('viz');
 
 const updateFrequency = 60;
 const secondsToUpdate = ref(updateFrequency);
@@ -11,8 +11,9 @@ const countries = ref([]);
 const forceControl = ref(true);
 
 const fetchData = async (_forceControl = false) => {
-  const port = await props.port();
-  axios.get(`http://localhost:${port}/traffic`).then((response) => {
+  const config = await configPromise;
+  console.log(config);
+  axios.get(`http://localhost:${config.http.port}/traffic`).then((response) => {
     flow.value = response.data.flows.normal;
     countries.value = response.data.countries;
     forceControl.value = _forceControl;

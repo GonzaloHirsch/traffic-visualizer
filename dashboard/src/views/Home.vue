@@ -122,7 +122,9 @@ const visibleSankeyData = computed(() => {
   <div v-else>
     <p class="error">
       The combination for filters you have selected yields no results, please
-      choose another one (or there is no data for this period).
+      choose another one (or there is no data for this period). It is also
+      possible that you haven't got a <strong>viz.config.json</strong> file as
+      per the specification.
     </p>
   </div>
   <p class="note">
