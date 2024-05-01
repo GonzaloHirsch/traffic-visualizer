@@ -84,6 +84,7 @@ jobs:
         run: npx semantic-release@21 --dry-run
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} # You need it apparently to do a dry-run
 
       - name: Nothing to release
         if: ${{ env.NEXT_RELEASE_VERSION == '' }}
