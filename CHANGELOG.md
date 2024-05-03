@@ -1,3 +1,12 @@
+## [1.0.5](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.4...v1.0.5) (2024-05-03)
+
+
+### Bug Fixes
+
+* new NPM token ([9c6b156](https://github.com/GonzaloHirsch/traffic-visualizer/commit/9c6b1569923173f60b9c6fb625937967d2641548))
+* remove GPR release ([3f69c77](https://github.com/GonzaloHirsch/traffic-visualizer/commit/3f69c77d459692ec26a8d83c2af3bb2b90b8d25d))
+* test a classic NPM token ([9d598d5](https://github.com/GonzaloHirsch/traffic-visualizer/commit/9d598d57f3867b33d3856529dcf0a863ede0175a))
+
 ## [1.0.4](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.3...v1.0.4) (2024-05-03)
 
 
