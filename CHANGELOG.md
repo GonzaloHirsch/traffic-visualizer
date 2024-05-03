@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.2...v1.0.3) (2024-05-03)
+
+
+### Bug Fixes
+
+* remove provenance ([87ff4bb](https://github.com/GonzaloHirsch/traffic-visualizer/commit/87ff4bb1b531d77c039531b411d6a93334c49211))
+
 ## [1.0.2](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.1...v1.0.2) (2024-05-03)
 
 
