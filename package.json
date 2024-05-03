@@ -15,7 +15,6 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "tag": "latest",
-    "provenance": true,
     "access": "public"
   },
   "keywords": [],
@@ -41,8 +40,8 @@
     "visualizer": "concurrently -c \"yellow,green\" \"npm:server\" \"npm:dashboard:preview\"",
     "headless": "npm run server",
     "npx-start": "npm run visualizer",
-    "release": "npm publish --provenance --access public",
-    "release:dry": "npm publish --provenance --access public --dry-run"
+    "release": "npm publish --access public",
+    "release:dry": "npm publish --access public --dry-run"
   },
   "release": {
     "branches": [
