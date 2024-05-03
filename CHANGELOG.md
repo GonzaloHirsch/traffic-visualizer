@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.3...v1.0.4) (2024-05-03)
+
+
+### Bug Fixes
+
+* potential issues when publishing ([0461f4d](https://github.com/GonzaloHirsch/traffic-visualizer/commit/0461f4d9b4c5e96e542a4f14093d7ccb4f5ab906))
+
 ## [1.0.3](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.2...v1.0.3) (2024-05-03)
 
 
