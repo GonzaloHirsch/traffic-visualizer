@@ -15,7 +15,8 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "tag": "latest",
-    "provenance": true
+    "provenance": true,
+    "access": "public"
   },
   "keywords": [],
   "license": "ISC",
