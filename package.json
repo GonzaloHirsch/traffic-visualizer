@@ -1,6 +1,6 @@
 {
   "name": "traffic-visualizer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "All-in-one visualizer for Cloud Run traffic on GCP. It automatically discovers Cloud Run services, ensuring that the configuration is minimal.",
   "private": false,
   "author": {

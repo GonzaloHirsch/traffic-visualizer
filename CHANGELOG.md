@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.1...v1.0.2) (2024-05-03)
+
+
+### Bug Fixes
+
+* remove `.npmrc` ([c894375](https://github.com/GonzaloHirsch/traffic-visualizer/commit/c894375c15261842a8ab1cd11d1e3cbb76c2e3b5))
+
 ## [1.0.1](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.0...v1.0.1) (2024-05-03)
 
 
