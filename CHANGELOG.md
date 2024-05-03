@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/GonzaloHirsch/traffic-visualizer/compare/v1.0.0...v1.0.1) (2024-05-03)
+
+
+### Bug Fixes
+
+* missing public access to package ([6c82684](https://github.com/GonzaloHirsch/traffic-visualizer/commit/6c826840e9022bb4664b454d93f39300f884cdf1))
+
 # 1.0.0 (2024-05-03)
 
 
