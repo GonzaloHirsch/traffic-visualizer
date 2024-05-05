@@ -61,11 +61,6 @@ onUnmounted(() => {
           <router-link :to="{ name: 'Home' }">Traffic Visualizer</router-link>
         </li>
         <li class="option">
-          <router-link :to="{ name: 'HowItWorks' }"
-            >How does it work?</router-link
-          >
-        </li>
-        <li class="option">
           <router-link :to="{ name: 'About' }">About</router-link>
         </li>
       </ul>
@@ -172,9 +167,13 @@ nav ul li.title {
 }
 nav ul li.option {
   flex: 0 1;
+  font-size: x-large;
   width: fit-content;
   min-width: fit-content;
   margin: 0 0 0 2rem;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
 }
 nav .update {
   font-size: small;

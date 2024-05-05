@@ -38,7 +38,7 @@ let config;
 app.use('/__config', async (req, res) => {
     try {
         if (!config) config = JSON.parse(await fs.readFile(`${process.env.NODE_ENV === 'production' ? '' : '../'}viz.config.json`, "utf-8"))
-        res.status(200).set({ 'Content-Type': 'application/json' }).send(config)
+        res.status(200).set({ 'Content-Type': 'application/json' }).send({ http: config?.http })
     } catch (e) {
         console.log(e.stack)
         res.status(500).end(e.stack)
