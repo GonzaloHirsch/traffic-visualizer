@@ -87,8 +87,6 @@ const fetchLogs = async () => {
   // Update the date for the flow.
   flow.timestamp = newDate;
 
-  console.log(flow);
-
   createCache(config?.mode, flow);
 
   // Update the dates with the old one.

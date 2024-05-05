@@ -1,8 +1,14 @@
 <script setup>
-import { ref, onMounted, onUnmounted, inject } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
-const configPromise = inject('viz');
+// Only fetch in the client
+let configPromise;
+if (!import.meta.env.SSR && typeof window !== 'undefined') {
+  configPromise = fetch(`${window.location.origin}/__config`).then((response) =>
+    response.json()
+  );
+}
 
 const updateFrequency = 60;
 const secondsToUpdate = ref(updateFrequency);
@@ -12,12 +18,14 @@ const forceControl = ref(true);
 
 const fetchData = async (_forceControl = false) => {
   const config = await configPromise;
-  console.log(config);
-  axios.get(`http://localhost:${config.http.port}/traffic`).then((response) => {
-    flow.value = response.data.flows.normal;
-    countries.value = response.data.countries;
-    forceControl.value = _forceControl;
-  });
+  if (!config?.http?.port) return;
+  axios
+    .get(`http://localhost:${config?.http?.port}/traffic`)
+    .then((response) => {
+      flow.value = response.data.flows.normal;
+      countries.value = response.data.countries;
+      forceControl.value = _forceControl;
+    });
 };
 
 // Times

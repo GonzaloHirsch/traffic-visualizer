@@ -1,17 +1,12 @@
-import { createApp, provide, h } from 'vue';
+import { createSSRApp } from 'vue'
+import App from './App.vue'
 import router from './router';
-import './style.css';
-import App from './App.vue';
 
-let configPromise = undefined;
 
-createApp({
-  created() {
-    if (!configPromise) configPromise = require(`../${process.env.NODE_ENV === "production" ? '' : '../'}viz.config.json`).default
-    provide("viz", configPromise)
-  },
-  render: () => h(App)
+// SSR requires a fresh app instance per request, therefore we export a function
+// that creates a fresh app instance. If using Vuex, we'd also be creating a
+// fresh store here.
+export function createApp() {
+    const app = createSSRApp(App).use(router)
+    return { app }
 }
-)
-  .use(router)
-  .mount('#app');
