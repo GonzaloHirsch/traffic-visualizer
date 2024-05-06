@@ -59,7 +59,11 @@ const visibleSankeyData = computed(() => {
     and <strong>path</strong>.
   </p>
   <h2>Controls</h2>
-  <p>Configure the amount of nodes to be shown:</p>
+  <p>
+    Configure the amount of nodes to be shown. This is particularly useful if
+    you are using the package in <strong>cache mode</strong> where it will load
+    multiple destinations:
+  </p>
   <div class="controls-sankey">
     <div style="padding-right: 1rem">
       <span>Minimum Node Traffic (1 - {{ nodeLimit }}) [{{ minNodes }}]</span>
@@ -94,6 +98,13 @@ const visibleSankeyData = computed(() => {
       <input class="sankey-pattern" style="width: 100%" v-model="pattern" />
     </div>
   </div>
+  <p class="note">
+    Note that hiding a node doesn't remove its resulting traffic from the
+    diagram, it simply hides it to increase readability. Regex matching is based
+    on both ends of the path using keys with the format "[origin][destination]".
+    For example the pattern "^(?!.*\/_nuxt\/).*$" ignores all static assets in
+    Nuxt.
+  </p>
   <GChart
     id="sankey"
     v-if="visibleSankeyData.length > 1"
@@ -103,7 +114,7 @@ const visibleSankeyData = computed(() => {
     :options="{
       sankey: {
         width: 800,
-        height: 800,
+        height: 2000,
         link: {
           colorMode: 'gradient'
         },
@@ -113,7 +124,6 @@ const visibleSankeyData = computed(() => {
             bold: false
           },
           width: 5,
-          nodePadding: 15,
           interactivity: true
         }
       }
@@ -127,13 +137,6 @@ const visibleSankeyData = computed(() => {
       per the specification.
     </p>
   </div>
-  <p class="note">
-    Note that hiding a node doesn't remove its resulting traffic from the
-    diagram, it simply hides it to increase readability. Regex matching is based
-    on both ends of the path using keys with the format "[origin][destination]".
-    For example the pattern "^(?!.*\/_nuxt\/).*$" ignores all static assets in
-    Nuxt.
-  </p>
   <h1>Traffic Breakdown per Country</h1>
   <p style="margin-bottom: 1rem">
     This view allows you to identify countries more easily to understand greater
@@ -174,6 +177,7 @@ const visibleSankeyData = computed(() => {
   background: #fdfefe;
 }
 #sankey {
-  height: 500px;
+  height: 1000px;
+  max-height: 1500px;
 }
 </style>
